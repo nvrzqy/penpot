@@ -1,3 +1,5 @@
+<img width="447" height="447" alt="image" src="https://github.com/user-attachments/assets/f66bd1a2-ddfa-432d-8b93-e9323d0729ba" />
+
 # Penpot Self-Hosting Project
 
 > **Proyek Komunikasi Data dan Jaringan — Self-Hosted Web Application**

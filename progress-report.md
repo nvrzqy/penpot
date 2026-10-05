@@ -10,7 +10,7 @@
 | Kategori            | Collaborative Design / UI Design & Prototyping |
 | Repository          | https://github.com/penpot/penpot               |
 | Aplikasi Pembanding | Figma                                          |
-| Deployment Awal     | WSL2 / Ubuntu                                  |
+| Deployment Awal     | VM / WSL                                       |
 | Deployment Final    | Hosting/VPS                                    |
 
 ---
@@ -67,42 +67,44 @@ Sebelum melakukan deployment, dilakukan analisis awal terhadap kebutuhan Penpot.
 
 ### 4.1 Environment
 
-Untuk tahap awal, Penpot akan dijalankan secara lokal menggunakan:
+Untuk tahap awal, Penpot akan dijalankan secara lokal menggunakan salah satu environment berikut:
 
-* Windows
-* WSL2
+* Virtual Machine (VM)
+* WSL
 * Ubuntu
 * Docker
 * Docker Compose
 
-Deployment lokal digunakan untuk mempelajari proses instalasi, konfigurasi, dan menjalankan Penpot sebelum aplikasi dipindahkan ke VPS.
+Environment lokal digunakan untuk mempelajari proses instalasi, konfigurasi, dan menjalankan Penpot sebelum aplikasi dipindahkan ke VPS.
+
+Pemilihan antara VM atau WSL akan disesuaikan dengan kebutuhan deployment dan environment yang digunakan oleh kelompok.
 
 ### 4.2 Docker
 
 Penpot menggunakan beberapa komponen aplikasi yang dapat dijalankan menggunakan container. Oleh karena itu, Docker digunakan untuk mempermudah proses deployment dan pengelolaan service.
 
-Secara umum, deployment dapat digambarkan sebagai:
+Secara umum, deployment lokal dapat digambarkan sebagai:
 
 ```text
-┌──────────────────────┐
-│    Windows Host      │
-│                      │
-│  ┌────────────────┐  │
-│  │      WSL2      │  │
-│  │    Ubuntu      │  │
-│  │                │  │
-│  │ ┌────────────┐ │  │
-│  │ │   Docker   │ │  │
-│  │ │            │ │  │
-│  │ │  ┌──────┐  │ │  │
-│  │ │  │Penpot│  │ │  │
-│  │ │  └──────┘  │ │  │
-│  │ └────────────┘ │  │
-│  └────────────────┘  │
-└──────────────────────┘
-           │
-           ▼
-      Web Browser
+┌──────────────────────────┐
+│      Local Machine       │
+│                          │
+│   ┌──────────────────┐   │
+│   │    VM / WSL      │   │
+│   │      Ubuntu      │   │
+│   │                  │   │
+│   │  ┌────────────┐  │   │
+│   │  │   Docker   │  │   │
+│   │  │            │  │   │
+│   │  │  ┌──────┐  │  │   │
+│   │  │  │Penpot│  │  │   │
+│   │  │  └──────┘  │  │   │
+│   │  └────────────┘  │   │
+│   └──────────────────┘   │
+└────────────┬─────────────┘
+             │
+             ▼
+        Web Browser
 ```
 
 ### 4.3 Kebutuhan Resource
@@ -129,20 +131,20 @@ Instalasi lokal belum dilakukan pada tahap progress ini.
 Rencana instalasi yang akan dilakukan adalah:
 
 ```text
-WSL2
-  ↓
+VM / WSL
+   ↓
 Ubuntu
-  ↓
+   ↓
 Install / konfigurasi Docker
-  ↓
+   ↓
 Download repository / deployment configuration Penpot
-  ↓
+   ↓
 Konfigurasi environment
-  ↓
+   ↓
 Menjalankan container Penpot
-  ↓
+   ↓
 Membuka Penpot melalui browser
-  ↓
+   ↓
 Pengujian fitur
 ```
 
@@ -160,7 +162,7 @@ Port aktual akan mengikuti konfigurasi deployment Penpot yang digunakan.
 
 **Status: Belum dilakukan**
 
-Tahap selanjutnya adalah melakukan instalasi dan konfigurasi Penpot pada WSL2.
+Tahap selanjutnya adalah melakukan instalasi dan konfigurasi Penpot pada environment lokal yang telah dipilih.
 
 ---
 
@@ -200,8 +202,9 @@ Arsitektur yang direncanakan:
               ┌────────────────┐
               │      VPS       │
               │                │
-              │ Docker         │
-              │   └─ Penpot    │
+              │     Docker     │
+              │       │        │
+              │    Penpot      │
               │                │
               └────────────────┘
                        │
@@ -266,7 +269,7 @@ Dokumentasi akhir akan mencakup:
 | Menentukan aplikasi pembanding | ✅ Selesai     |
 | Mempelajari repository Penpot  | ✅ Selesai     |
 | Analisis awal kebutuhan        | 🔄 Berjalan   |
-| Menyiapkan WSL2                | 🔄 Berjalan   |
+| Menyiapkan VM / WSL            | 🔄 Berjalan   |
 | Instalasi Docker               | ⬜ Belum       |
 | Instalasi Penpot lokal         | ⬜ Belum       |
 | Pengujian Penpot               | ⬜ Belum       |
@@ -283,13 +286,14 @@ Dokumentasi akhir akan mencakup:
 
 Prioritas pengerjaan selanjutnya:
 
-1. Menyiapkan WSL2 Ubuntu.
-2. Memastikan Docker dapat berjalan pada WSL2.
-3. Melakukan instalasi Penpot secara lokal.
-4. Memastikan Penpot dapat diakses melalui browser.
-5. Menguji fitur-fitur utama.
-6. Mendokumentasikan proses instalasi menggunakan screenshot.
-7. Menyiapkan deployment Penpot pada VPS.
-8. Melakukan konfigurasi agar aplikasi dapat diakses melalui internet.
-9. Melengkapi perbandingan Penpot dengan Figma.
-10. Menyusun dokumentasi dan PPT final.
+1. Menentukan environment lokal yang akan digunakan, yaitu VM atau WSL.
+2. Menyiapkan Ubuntu pada environment tersebut.
+3. Memastikan Docker dapat berjalan dengan baik.
+4. Melakukan instalasi Penpot secara lokal.
+5. Memastikan Penpot dapat diakses melalui browser.
+6. Menguji fitur-fitur utama.
+7. Mendokumentasikan proses instalasi menggunakan screenshot.
+8. Menyiapkan deployment Penpot pada VPS.
+9. Melakukan konfigurasi agar aplikasi dapat diakses melalui internet.
+10. Melengkapi perbandingan Penpot dengan Figma.
+11. Menyusun dokumentasi dan PPT final.

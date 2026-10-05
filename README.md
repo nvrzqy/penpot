@@ -6,6 +6,18 @@ Repository ini berisi dokumentasi dan konfigurasi proyek **self-hosting Penpot**
 
 ---
 
+## Anggota Kelompok
+
+| No. | Nama                 | NIM   |
+| --: | -------------------- | ----- |
+|   1 | **Nadya Shafwah Rizalti** | M0403241007 |
+|   2 | **Nazwa Nadya Rahma** | M0403241060 |
+|   3 | **Zivanka Aurellia Astadewi Maheswari** | M0403241111 |
+|   4 | **Azalia Noverizqy Aqila Pramono** | M0403241123 |
+|   4 | **Rafi Subhan Jaya Kusuma** | M0403241138 |
+
+---
+
 ## Deskripsi Tentang Proyek
 
 Proyek ini bertujuan untuk mempelajari proses **deployment dan self-hosting aplikasi web** menggunakan Penpot.
@@ -44,8 +56,6 @@ Development / Testing
       End Users
 ```
 
----
-
 ## Tujuan
 
 Tujuan dari proyek ini adalah:
@@ -83,7 +93,7 @@ Penpot bersifat **open-source** dan dapat di-deploy pada infrastructure sendiri.
 
 ---
 
-## 👥 Anggota Kelompok
+## Anggota Kelompok
 
 | No. | Nama                 | NIM   |
 | --: | -------------------- | ----- |
@@ -92,8 +102,6 @@ Penpot bersifat **open-source** dan dapat di-deploy pada infrastructure sendiri.
 |   3 | **Zivanka Aurellia Astadewi Maheswari** | M0403241111 |
 |   4 | **Azalia Noverizqy Aqila Pramono** | M0403241123 |
 |   4 | **Rafi Subhan Jaya Kusuma** | M0403241138 |
-
-> **Catatan:** Pembagian peran dapat disesuaikan dengan kontribusi masing-masing anggota.
 
 ---
 

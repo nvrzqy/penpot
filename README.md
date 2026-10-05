@@ -8,13 +8,13 @@ Repository ini berisi dokumentasi dan konfigurasi proyek **self-hosting Penpot**
 
 ## Anggota Kelompok
 
-| No. | Nama                 | NIM   |
-| --: | -------------------- | ----- |
-|   1 | **Nadya Shafwah Rizalti** | M0403241007 |
-|   2 | **Nazwa Nadya Rahma** | M0403241060 |
+| No. | Nama                                    | NIM         |
+| --: | --------------------------------------- | ----------- |
+|   1 | **Nadya Shafwah Rizalti**               | M0403241007 |
+|   2 | **Nazwa Nadya Rahma**                   | M0403241060 |
 |   3 | **Zivanka Aurellia Astadewi Maheswari** | M0403241111 |
-|   4 | **Azalia Noverizqy Aqila Pramono** | M0403241123 |
-|   4 | **Rafi Subhan Jaya Kusuma** | M0403241138 |
+|   4 | **Azalia Noverizqy Aqila Pramono**      | M0403241123 |
+|   5 | **Rafi Subhan Jaya Kusuma**             | M0403241138 |
 
 ---
 
@@ -24,7 +24,7 @@ Proyek ini bertujuan untuk mempelajari proses **deployment dan self-hosting apli
 
 Penpot dipilih sebagai aplikasi yang akan di-deploy karena menyediakan berbagai fitur untuk kebutuhan desain UI/UX, seperti pembuatan desain, prototyping, dan kolaborasi. Sebagai aplikasi open-source, Penpot dapat dijalankan menggunakan infrastruktur yang dikelola sendiri.
 
-Dalam proyek ini, Penpot akan terlebih dahulu diuji dan dikonfigurasi secara lokal menggunakan **WSL2 dan Docker**. Setelah deployment lokal berhasil, aplikasi akan dipindahkan ke **VPS/hosting** sehingga dapat diakses melalui internet.
+Dalam proyek ini, Penpot akan terlebih dahulu diuji dan dikonfigurasi secara lokal menggunakan **VM/WSL dan Docker**. Setelah deployment lokal berhasil, aplikasi akan dipindahkan ke **VPS/hosting** sehingga dapat diakses melalui internet.
 
 ### Deployment Plan
 
@@ -32,29 +32,31 @@ Dalam proyek ini, Penpot akan terlebih dahulu diuji dan dikonfigurasi secara lok
 Development / Testing
         │
         ▼
-┌───────────────────┐
-│      Windows      │
-│       WSL2        │
-│      Ubuntu       │
-│       Docker      │
-│      Penpot       │
-└─────────┬─────────┘
-          │
-          │ Testing
-          ▼
-┌───────────────────┐
-│        VPS        │
-│      Docker       │
-│      Penpot       │
-│  Domain + HTTPS   │
-└─────────┬─────────┘
-          │
-          ▼
-       Internet
-          │
-          ▼
-      End Users
+┌───────────────────────┐
+│     Local Machine     │
+│       VM / WSL        │
+│        Ubuntu         │
+│        Docker         │
+│        Penpot         │
+└───────────┬───────────┘
+            │
+            │ Testing
+            ▼
+┌───────────────────────┐
+│          VPS          │
+│        Docker         │
+│        Penpot         │
+│    Domain + HTTPS     │
+└───────────┬───────────┘
+            │
+            ▼
+         Internet
+            │
+            ▼
+        End Users
 ```
+
+---
 
 ## Tujuan
 
@@ -93,18 +95,6 @@ Penpot bersifat **open-source** dan dapat di-deploy pada infrastructure sendiri.
 
 ---
 
-## Anggota Kelompok
-
-| No. | Nama                 | NIM   |
-| --: | -------------------- | ----- |
-|   1 | **Nadya Shafwah Rizalti** | M0403241007 |
-|   2 | **Nazwa Nadya Rahma** | M0403241060 |
-|   3 | **Zivanka Aurellia Astadewi Maheswari** | M0403241111 |
-|   4 | **Azalia Noverizqy Aqila Pramono** | M0403241123 |
-|   4 | **Rafi Subhan Jaya Kusuma** | M0403241138 |
-
----
-
 ## Technology Stack
 
 Teknologi yang direncanakan digunakan dalam proyek:
@@ -112,7 +102,7 @@ Teknologi yang direncanakan digunakan dalam proyek:
 * **Penpot** — Web application
 * **Docker** — Containerization
 * **Docker Compose** — Container orchestration
-* **WSL2** — Local development environment
+* **VM / WSL** — Local development environment
 * **Ubuntu** — Linux environment
 * **VPS/Cloud Hosting** — Production deployment
 * **Domain** — Public access
@@ -124,11 +114,13 @@ Teknologi yang direncanakan digunakan dalam proyek:
 
 ### Local Development
 
-Pada tahap awal, Penpot akan dijalankan pada environment lokal untuk melakukan instalasi dan pengujian.
+Pada tahap awal, Penpot akan dijalankan pada environment lokal menggunakan **VM atau WSL** untuk melakukan instalasi dan pengujian.
+
+Environment yang digunakan akan dipilih sesuai dengan kebutuhan dan kondisi perangkat selama proses deployment.
 
 ```text
-Windows
-└── WSL2
+Windows / Host Machine
+└── VM / WSL
     └── Ubuntu
         └── Docker
             └── Penpot
@@ -166,6 +158,7 @@ VPS
 
 Target akhirnya adalah aplikasi dapat diakses melalui internet menggunakan domain yang telah dikonfigurasi.
 
+---
 
 ## 📖 Documentation
 
@@ -197,7 +190,7 @@ Screenshot dan dokumentasi hasil deployment akan ditambahkan setelah Penpot berh
 
 ---
 
-## 📚 References
+## References
 
 * [Penpot GitHub Repository](https://github.com/penpot/penpot)
 * [Awesome Selfhosted](https://github.com/Kickball/awesome-selfhosted)
@@ -205,7 +198,7 @@ Screenshot dan dokumentasi hasil deployment akan ditambahkan setelah Penpot berh
 
 ---
 
-## 📄 Project Requirements
+## Project Requirements
 
 Proyek ini dibuat sebagai bagian dari tugas **Komunikasi Data dan Jaringan** dengan ketentuan utama:
 
@@ -219,8 +212,8 @@ Proyek ini dibuat sebagai bagian dari tugas **Komunikasi Data dan Jaringan** den
 
 ---
 
-## 👩‍💻 Project Status
+## Project Status
 
 **Current Status: Initial Setup & Research**
 
-Saat ini proyek berada pada tahap pemilihan aplikasi, research, dan persiapan environment.
+Saat ini proyek berada pada tahap pemilihan aplikasi, research, dan persiapan environment lokal. Environment lokal yang akan digunakan masih dalam tahap penentuan antara **VM atau WSL**.

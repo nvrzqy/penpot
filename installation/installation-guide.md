@@ -151,6 +151,11 @@ curl -fsSL \
   https://raw.githubusercontent.com/penpot/penpot/main/docker/images/docker-compose.yaml \
   -o docker-compose.yaml
 ```
+atau
+
+```bash
+wget https://raw.githubusercontent.com/penpot/penpot/main/docker/images/docker-compose.yaml
+```
 
 Pastikan file berhasil diunduh:
 

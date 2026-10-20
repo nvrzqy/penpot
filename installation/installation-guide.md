@@ -4,7 +4,7 @@
 
 Penpot merupakan platform desain UI/UX berbasis web yang bersifat *open-source*. Aplikasi ini memungkinkan pengguna membuat desain antarmuka, prototipe interaktif, dan sistem desain melalui browser.
 
-Panduan ini menjelaskan cara memasang Penpot pada Virtual Private Server (VPS) menggunakan Docker dan Docker Compose. Metode ini dapat digunakan pada berbagai penyedia VPS, seperti layanan cloud publik, server virtual pribadi, maupun server Linux yang dikelola sendiri. Pada proyek ini, Penpot dideploy menggunakan layanan VPS dari Microsoft Azure. Untuk panduan lengkap mengenai _deployment_ dengan Microsoft Azure beserta dokumentasinya dilihat pada: [Installation Guide Azure](installation/installation-guide-azure.md)
+Panduan ini menjelaskan cara memasang Penpot pada Virtual Private Server (VPS) menggunakan Docker dan Docker Compose. Metode ini dapat digunakan pada berbagai penyedia VPS, seperti layanan cloud publik, server virtual pribadi, maupun server Linux yang dikelola sendiri. Pada proyek ini, Penpot dideploy menggunakan layanan VPS dari Microsoft Azure. Untuk panduan lengkap mengenai _deployment_ dengan Microsoft Azure beserta dokumentasinya dilihat pada: [Installation Guide Azure](installation-guide-azure.md)
 
 ### Tujuan
 

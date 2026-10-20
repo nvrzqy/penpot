@@ -1,4 +1,4 @@
-<img width="447" height="447" alt="image" src="https://github.com/user-attachments/assets/f66bd1a2-ddfa-432d-8b93-e9323d0729ba" />
+<img width="1230" height="305" alt="image" src="https://github.com/user-attachments/assets/841799ec-52df-4f8b-960b-cdc78f3a100d" />
 
 # Penpot Self-Hosting Project
 

@@ -4,7 +4,7 @@
 
 Penpot merupakan platform desain dan prototipe berbasis web yang bersifat *open-source*. Aplikasi ini dapat digunakan untuk merancang antarmuka pengguna (UI), membuat prototipe interaktif, dan mengelola sistem desain.
 
-Pada proyek ini, Penpot diimplementasikan secara *self-hosted* menggunakan Microsoft Azure sebagai infrastruktur cloud dan Docker Compose untuk menjalankan serta mengelola layanan aplikasi.
+Pada proyek ini, Penpot diimplementasikan secara *self-hosted* menggunakan Microsoft Azure sebagai infrastruktur cloud dan Docker Compose untuk menjalankan serta mengelola layanan aplikasi. Untuk panduan umum dapat dilihat pada [Installation Guide](installation-guide.md)
 
 Dengan pendekatan ini, pengguna dapat mengakses Penpot melalui browser tanpa perlu memasang aplikasi secara lokal.
 

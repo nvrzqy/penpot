@@ -1,12 +1,5 @@
 # Laporan Proyek Self-Hosting Penpot
 
-> Dokumen ini merupakan laporan berkala yang akan terus diperbarui mengikuti perkembangan proyek.
-
-**Terakhir diperbarui:** 21 Oktober 2026  
-**Status saat ini:** Deployment Penpot pada Microsoft Azure telah selesai. Dokumentasi penggunaan fitur utama, pengujian aplikasi, dan perbandingan Penpot dengan Figma masih dalam tahap berikutnya.
-
----
-
 ## 1. Informasi Proyek
 
 | Keterangan | Detail |

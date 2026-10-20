@@ -6,6 +6,16 @@
 
 Repository ini berisi konfigurasi dan dokumentasi proyek self-hosting **Penpot**, sebuah aplikasi desain UI/UX dan prototyping berbasis web yang bersifat open-source.
 
+## Anggota Kelompok
+
+| No. | Nama | NIM |
+|---:|---|---|
+| 1 | **Nadya Shafwah Rizalti** | M0403241007 |
+| 2 | **Nazwa Nadya Rahma** | M0403241060 |
+| 3 | **Zivanka Aurellia Astadewi Maheswari** | M0403241111 |
+| 4 | **Azalia Noverizqy Aqila Pramono** | M0403241123 |
+| 5 | **Rafi Subhan Jaya Kusuma** | M0403241138 |
+
 ## Tentang Penpot
 
 Penpot adalah platform desain digital yang dapat digunakan untuk membuat antarmuka pengguna, prototype interaktif, komponen desain, dan design system. Aplikasi ini berjalan melalui browser dan mendukung proses kerja kolaboratif.
@@ -83,15 +93,6 @@ penpot/
 └── README.md
 ```
 
-## Anggota Kelompok
-
-| No. | Nama | NIM |
-|---:|---|---|
-| 1 | **Nadya Shafwah Rizalti** | M0403241007 |
-| 2 | **Nazwa Nadya Rahma** | M0403241060 |
-| 3 | **Zivanka Aurellia Astadewi Maheswari** | M0403241111 |
-| 4 | **Azalia Noverizqy Aqila Pramono** | M0403241123 |
-| 5 | **Rafi Subhan Jaya Kusuma** | M0403241138 |
 
 ## Referensi
 

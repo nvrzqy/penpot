@@ -166,9 +166,9 @@ Target akhirnya adalah aplikasi dapat diakses melalui internet menggunakan domai
 
 Dokumentasi proyek akan mencakup:
 
-1. [Progress Report](progress-report.md)
-2. Installation Guide *(akan ditambahkan)*
-3. Deployment Guide *(akan ditambahkan)*
+1. [Progress Report](docs/progress-report.md)
+2. [Installation Guide Lokal](installation/installation-guide.md)
+3. [Deployment Guide](deploy/deployement-guide.md)
 4. Application Usage *(akan ditambahkan)*
 5. Penpot vs Figma *(akan ditambahkan)*
 

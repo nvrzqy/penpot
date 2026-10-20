@@ -1,10 +1,10 @@
-# Panduan Instalasi Penpot Self-Hosted di Microsoft Azure
+# Panduan Deployment Penpot Self-Hosted di Microsoft Azure
 
 ## 1. Gambaran Umum Proyek
 
 Penpot merupakan platform desain dan prototipe berbasis web yang bersifat *open-source*. Aplikasi ini dapat digunakan untuk merancang antarmuka pengguna (UI), membuat prototipe interaktif, dan mengelola sistem desain.
 
-Pada proyek ini, Penpot diimplementasikan secara *self-hosted* menggunakan Microsoft Azure sebagai infrastruktur cloud dan Docker Compose untuk menjalankan serta mengelola layanan aplikasi. Untuk panduan umum dapat dilihat pada [Installation Guide](installation-guide.md)
+Pada proyek ini, Penpot diimplementasikan secara *self-hosted* menggunakan Microsoft Azure sebagai infrastruktur cloud dan Docker Compose untuk menjalankan serta mengelola layanan aplikasi. Untuk panduan deployment umum, lihat [Deployment Guide](deployement-guide.md).
 
 Dengan pendekatan ini, pengguna dapat mengakses Penpot melalui browser tanpa perlu memasang aplikasi secara lokal.
 

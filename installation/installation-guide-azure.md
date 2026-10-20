@@ -423,21 +423,32 @@ Untuk penggunaan jangka panjang, pengamanan tambahan berupa HTTPS, kredensial ya
 <img width="1303" height="348" alt="image" src="https://github.com/user-attachments/assets/8f9363a0-2de3-414c-b0ec-dcecd65c158a" />
 <img width="1337" height="557" alt="image" src="https://github.com/user-attachments/assets/06bb1614-8938-423c-b746-eaf040aa8479" />
 <img width="1393" height="620" alt="image" src="https://github.com/user-attachments/assets/7daa5062-affa-476d-8590-3478dc8c363f" />
-**Gambar 1.** Ringkasan Virtual Machine pada Azure Portal.
+
+**Gambar 1** Ringkasan Virtual Machine pada Azure Portal.
+
 
 <img width="1088" height="860" alt="image" src="https://github.com/user-attachments/assets/2f9299e5-4651-4edf-9746-48578f41ced7" />
+
 **Gambar 2.** Terminal yang berhasil terhubung ke VM melalui SSH.
+
 
 <img width="1911" height="695" alt="image" src="https://github.com/user-attachments/assets/751cc074-3957-409f-ac19-a4aa41aa93ea" />
 <img width="1891" height="321" alt="image" src="https://github.com/user-attachments/assets/7297db82-f679-4652-be95-f207562ad1e2" />
+
 **Gambar 3.** Verifikasi versi Docker dan Docker Compose.
 
+
 <img width="1917" height="482" alt="image" src="https://github.com/user-attachments/assets/fb169de1-ca0f-4146-b66d-998550b3048a" />
+
 **Gambar 4.** Status container Penpot yang berjalan.
+
 
 <img width="1917" height="1151" alt="image" src="https://github.com/user-attachments/assets/55b8359b-b188-4e01-adae-10c0ddb85922" />
 <img width="1917" height="1146" alt="image" src="https://github.com/user-attachments/assets/82617e26-396e-4ed6-9c94-f9f23f39d402" />
+
 **Gambar 5.** Halaman Penpot yang berhasil diakses melalui IP publik.
 
+
 <img width="1917" height="1147" alt="image" src="https://github.com/user-attachments/assets/ae2f1d4b-9035-444a-b014-a4f570512726" />
+
 **Gambar 6.** File desain uji yang berhasil dibuat dan disimpan.

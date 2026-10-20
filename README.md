@@ -1,221 +1,102 @@
-<img width="1230" height="305" alt="image" src="https://github.com/user-attachments/assets/841799ec-52df-4f8b-960b-cdc78f3a100d" />
+<img width="1230" height="305" alt="Penpot" src="https://github.com/user-attachments/assets/841799ec-52df-4f8b-960b-cdc78f3a100d" />
 
 # Penpot Self-Hosting Project
 
 > **Proyek Komunikasi Data dan Jaringan — Self-Hosted Web Application**
 
-Repository ini berisi dokumentasi dan konfigurasi proyek **self-hosting Penpot**, sebuah platform desain dan prototyping berbasis web yang bersifat open-source.
-
----
-
-## Anggota Kelompok
-
-| No. | Nama                                    | NIM         |
-| --: | --------------------------------------- | ----------- |
-|   1 | **Nadya Shafwah Rizalti**               | M0403241007 |
-|   2 | **Nazwa Nadya Rahma**                   | M0403241060 |
-|   3 | **Zivanka Aurellia Astadewi Maheswari** | M0403241111 |
-|   4 | **Azalia Noverizqy Aqila Pramono**      | M0403241123 |
-|   5 | **Rafi Subhan Jaya Kusuma**             | M0403241138 |
-
----
-
-## Deskripsi Tentang Proyek
-
-Proyek ini bertujuan untuk mempelajari proses **deployment dan self-hosting aplikasi web** menggunakan Penpot.
-
-Penpot dipilih sebagai aplikasi yang akan di-deploy karena menyediakan berbagai fitur untuk kebutuhan desain UI/UX, seperti pembuatan desain, prototyping, dan kolaborasi. Sebagai aplikasi open-source, Penpot dapat dijalankan menggunakan infrastruktur yang dikelola sendiri.
-
-Dalam proyek ini, Penpot akan terlebih dahulu diuji dan dikonfigurasi secara lokal menggunakan **VM/WSL dan Docker**. Setelah deployment lokal berhasil, aplikasi akan dipindahkan ke **VPS/hosting** sehingga dapat diakses melalui internet.
-
-### Deployment Plan
-
-```text
-Development / Testing
-        │
-        ▼
-┌───────────────────────┐
-│     Local Machine     │
-│       VM / WSL        │
-│        Ubuntu         │
-│        Docker         │
-│        Penpot         │
-└───────────┬───────────┘
-            │
-            │ Testing
-            ▼
-┌───────────────────────┐
-│          VPS          │
-│        Docker         │
-│        Penpot         │
-│    Domain + HTTPS     │
-└───────────┬───────────┘
-            │
-            ▼
-         Internet
-            │
-            ▼
-        End Users
-```
-
----
-
-## Tujuan
-
-Tujuan dari proyek ini adalah:
-
-* Mempelajari konsep **self-hosting aplikasi web**.
-* Melakukan instalasi dan konfigurasi Penpot.
-* Memahami penggunaan Docker dalam deployment aplikasi web.
-* Melakukan deployment aplikasi pada VPS/hosting.
-* Membuat aplikasi dapat diakses melalui internet.
-* Menguji fitur utama Penpot.
-* Membandingkan Penpot dengan aplikasi sejenis.
-* Mendokumentasikan proses instalasi dan deployment.
-
----
+Repository ini berisi konfigurasi dan dokumentasi proyek self-hosting **Penpot**, sebuah aplikasi desain UI/UX dan prototyping berbasis web yang bersifat open-source.
 
 ## Tentang Penpot
 
-**Penpot** adalah platform desain dan prototyping berbasis web yang ditujukan untuk pembuatan desain UI/UX dan kolaborasi.
+Penpot adalah platform desain digital yang dapat digunakan untuk membuat antarmuka pengguna, prototype interaktif, komponen desain, dan design system. Aplikasi ini berjalan melalui browser dan mendukung proses kerja kolaboratif.
 
-Beberapa kemampuan Penpot yang akan dipelajari dalam proyek ini meliputi:
+Berbeda dari banyak aplikasi desain berbasis cloud, Penpot menyediakan opsi self-hosting. Organisasi atau pengguna dapat menjalankan Penpot pada infrastruktur yang dikelola sendiri sehingga memiliki kontrol lebih besar terhadap konfigurasi, layanan, dan penyimpanan data.
 
-* UI/UX design
-* Prototyping
-* Design components
-* Project management
-* Collaboration
-* Design systems
-* Web-based design workflow
+Kemampuan utama Penpot meliputi:
 
-Penpot bersifat **open-source** dan dapat di-deploy pada infrastructure sendiri.
+- Desain UI/UX berbasis web.
+- Pembuatan prototype interaktif.
+- Components dan reusable assets.
+- Design system.
+- Pengelolaan project dan file desain.
+- Kolaborasi antar pengguna.
+- Ekspor hasil desain.
+- Self-hosting.
 
-### Repository Resmi
+Repository resmi Penpot tersedia di [GitHub Penpot](https://github.com/penpot/penpot).
 
-[Penpot GitHub Repository](https://github.com/penpot/penpot)
+## Tentang Proyek
 
----
+Proyek ini dibuat untuk mempelajari penerapan aplikasi web yang di-host secara mandiri. Penpot digunakan sebagai studi kasus karena memiliki beberapa layanan yang saling terhubung, seperti frontend, backend, database, cache, dan layanan ekspor.
 
-## Technology Stack
+Docker dan Docker Compose digunakan untuk menjalankan serta mengelola layanan-layanan tersebut dalam container. Implementasi proyek mencakup penggunaan pada komputer lokal dan server berbasis cloud.
 
-Teknologi yang direncanakan digunakan dalam proyek:
+Figma dipilih sebagai aplikasi pembanding karena memiliki fungsi utama yang serupa dalam bidang desain antarmuka, prototyping, dan kolaborasi.
 
-* **Penpot** — Web application
-* **Docker** — Containerization
-* **Docker Compose** — Container orchestration
-* **VM / WSL** — Local development environment
-* **Ubuntu** — Linux environment
-* **VPS/Cloud Hosting** — Production deployment
-* **Domain** — Public access
-* **HTTPS/SSL** — Secure connection
+## Tujuan
 
----
+Tujuan proyek ini adalah:
 
-## Deployment
+- Memahami konsep self-hosting aplikasi web.
+- Mempelajari penggunaan Docker dan Docker Compose.
+- Melakukan instalasi dan konfigurasi Penpot.
+- Menerapkan aplikasi web pada infrastruktur server.
+- Memahami hubungan antara aplikasi, database, penyimpanan, dan jaringan.
+- Mendokumentasikan proses instalasi dan implementasi.
+- Mempelajari fitur utama Penpot.
+- Melakukan pengujian terhadap fungsi aplikasi.
+- Membandingkan Penpot dengan Figma.
 
-### Local Development
+## Teknologi yang Digunakan
 
-Pada tahap awal, Penpot akan dijalankan pada environment lokal menggunakan **VM atau WSL** untuk melakukan instalasi dan pengujian.
+| Teknologi | Fungsi |
+|---|---|
+| Penpot | Aplikasi desain dan prototyping |
+| Docker | Menjalankan layanan dalam container |
+| Docker Compose | Mengelola kumpulan layanan Penpot |
+| PostgreSQL | Menyimpan data aplikasi |
+| Valkey | Mendukung cache dan koordinasi layanan |
+| Ubuntu Server | Sistem operasi server |
+| Microsoft Azure | Infrastruktur cloud untuk implementasi server |
 
-Environment yang digunakan akan dipilih sesuai dengan kebutuhan dan kondisi perangkat selama proses deployment.
+## Dokumentasi
 
-```text
-Windows / Host Machine
-└── VM / WSL
-    └── Ubuntu
-        └── Docker
-            └── Penpot
-```
+1. [Laporan Proyek](docs/report.md)
+2. [Panduan Instalasi](installation/installation-guide.md)
+3. [Panduan Deployment](deploy/deployement-guide.md)
+4. [Docker Compose](deploy/docker-compose.yaml)
+5. Application Usage
+6. Penpot vs Figma
 
-Local deployment digunakan untuk:
-
-* Menguji instalasi.
-* Mempelajari konfigurasi Penpot.
-* Menguji fitur.
-* Menemukan dan menyelesaikan masalah deployment sebelum menggunakan VPS.
-
-### Production Deployment
-
-Setelah pengujian lokal selesai, Penpot akan di-deploy pada VPS.
-
-Target deployment:
+## Struktur Repository
 
 ```text
-Internet
-   │
-   ▼
-Domain
-   │
-   ▼
-VPS
-   │
-   ├── Reverse Proxy
-   │
-   ├── HTTPS / SSL
-   │
-   └── Docker
-        └── Penpot
+penpot/
+├── deploy/
+│   ├── deployement-guide.md
+│   ├── deployement-guide-azure.md
+│   └── docker-compose.yaml
+├── docs/
+│   └── report.md
+├── installation/
+│   └── installation-guide.md
+└── README.md
 ```
 
-Target akhirnya adalah aplikasi dapat diakses melalui internet menggunakan domain yang telah dikonfigurasi.
+## Anggota Kelompok
 
----
+| No. | Nama | NIM |
+|---:|---|---|
+| 1 | **Nadya Shafwah Rizalti** | M0403241007 |
+| 2 | **Nazwa Nadya Rahma** | M0403241060 |
+| 3 | **Zivanka Aurellia Astadewi Maheswari** | M0403241111 |
+| 4 | **Azalia Noverizqy Aqila Pramono** | M0403241123 |
+| 5 | **Rafi Subhan Jaya Kusuma** | M0403241138 |
 
-## 📖 Documentation
+## Referensi
 
-Dokumentasi proyek akan mencakup:
-
-1. [Progress Report](docs/progress-report.md)
-2. [Installation Guide Lokal](installation/installation-guide.md)
-3. [Deployment Guide](deploy/deployement-guide.md)
-4. Application Usage *(akan ditambahkan)*
-5. Penpot vs Figma *(akan ditambahkan)*
-
----
-
-## 📸 Demo
-
-Screenshot dan dokumentasi hasil deployment akan ditambahkan setelah Penpot berhasil dijalankan.
-
-### Local Deployment
-
-> *Screenshot Penpot pada local environment akan ditambahkan.*
-
-### VPS Deployment
-
-> *Screenshot Penpot yang telah dapat diakses melalui internet akan ditambahkan.*
-
-### Application Demo
-
-> *Screenshot fitur Penpot akan ditambahkan.*
-
----
-
-## References
-
-* [Penpot GitHub Repository](https://github.com/penpot/penpot)
-* [Awesome Selfhosted](https://github.com/Kickball/awesome-selfhosted)
-* [Figma](https://www.figma.com/)
-
----
-
-## Project Requirements
-
-Proyek ini dibuat sebagai bagian dari tugas **Komunikasi Data dan Jaringan** dengan ketentuan utama:
-
-* Melakukan instalasi aplikasi web.
-* Membuat dokumentasi instalasi.
-* Mengisi konten aplikasi.
-* Melakukan deployment pada hosting/VPS.
-* Memastikan aplikasi dapat diakses melalui internet.
-* Membuat presentasi.
-* Membandingkan aplikasi dengan aplikasi sejenis.
-
----
-
-## Project Status
-
-**Current Status: Initial Setup & Research**
-
-Saat ini proyek berada pada tahap pemilihan aplikasi, research, dan persiapan environment lokal. Environment lokal yang akan digunakan masih dalam tahap penentuan antara **VM atau WSL**.
+- [Penpot](https://penpot.app/)
+- [Penpot GitHub Repository](https://github.com/penpot/penpot)
+- [Penpot Self-Hosting Guide](https://help.penpot.app/technical-guide/getting-started/)
+- [Docker Documentation](https://docs.docker.com/)
+- [Figma](https://www.figma.com/)

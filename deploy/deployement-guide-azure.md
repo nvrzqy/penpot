@@ -6,14 +6,15 @@ Penpot merupakan platform desain dan prototipe berbasis web yang bersifat *open-
 
 Pada proyek ini, Penpot diimplementasikan secara *self-hosted* menggunakan Microsoft Azure sebagai infrastruktur cloud dan Docker Compose untuk menjalankan serta mengelola layanan aplikasi. Untuk panduan deployment umum, lihat [Deployment Guide](deployement-guide.md).
 
-Dengan pendekatan ini, pengguna dapat mengakses Penpot melalui browser tanpa perlu memasang aplikasi secara lokal.
+Dengan pendekatan ini, pengguna dapat mengakses Penpot melalui browser tanpa perlu memasang aplikasi secara lokal. Implementasi akhir menggunakan domain [penpot-kdjk3.linkpc.net](https://penpot-kdjk3.linkpc.net/) dengan Caddy sebagai reverse proxy dan HTTPS.
 
 ### Tujuan
 
 - Membangun instance Penpot pada Microsoft Azure.
 - Mengimplementasikan layanan Penpot menggunakan Docker Compose.
 - Mengonfigurasi database dan layanan pendukung aplikasi.
-- Membuat aplikasi dapat diakses melalui browser menggunakan alamat IP publik VM.
+- Membuat aplikasi dapat diakses melalui domain publik yang aman menggunakan HTTPS.
+- Mengonfigurasi DNS dan Caddy sebagai reverse proxy.
 - Melakukan pengujian dan mendokumentasikan prosedur pemeliharaan serta penghapusan layanan.
 
 ## 2. Arsitektur Sistem
@@ -23,6 +24,8 @@ Implementasi Penpot terdiri dari beberapa komponen utama berikut.
 | Komponen | Fungsi |
 |---|---|
 | Microsoft Azure Virtual Machine | Menyediakan lingkungan server untuk menjalankan Penpot. |
+| DNS | Mengarahkan `penpot-kdjk3.linkpc.net` ke IP publik Azure VM. |
+| Caddy | Menerima request pada port 80/443, mengelola TLS, dan meneruskan request ke Penpot. |
 | Docker Engine | Menjalankan setiap komponen aplikasi dalam container. |
 | Docker Compose | Mengatur konfigurasi, jaringan, dependensi, dan siklus hidup container. |
 | Penpot Frontend | Menyediakan antarmuka yang diakses pengguna melalui browser. |
@@ -33,7 +36,7 @@ Implementasi Penpot terdiri dari beberapa komponen utama berikut.
 | Penpot MCP | Menyediakan integrasi Model Context Protocol apabila diaktifkan. |
 | Penpot Admin Console | Menyediakan fungsi administratif apabila disertakan dalam konfigurasi. |
 
-Frontend berkomunikasi dengan backend untuk memproses aktivitas pengguna. Backend terhubung dengan PostgreSQL dan Valkey melalui jaringan internal Docker. Dengan demikian, database tidak perlu diekspos secara langsung ke internet.
+Pengguna mengakses domain melalui HTTPS. Caddy menerima request pada port `443`, kemudian meneruskannya ke frontend Penpot pada `127.0.0.1:9001`. Frontend berkomunikasi dengan backend, sedangkan backend terhubung dengan PostgreSQL dan Valkey melalui jaringan internal Docker. Dengan demikian, database tidak perlu diekspos secara langsung ke internet.
 
 ## 3. Prasyarat
 
@@ -44,6 +47,7 @@ Sebelum instalasi dilakukan, beberapa kebutuhan berikut harus tersedia:
 - Akun Microsoft Azure dengan subscription aktif.
 - Virtual Machine yang menggunakan sistem operasi Ubuntu Server.
 - Alamat IP publik untuk mengakses aplikasi.
+- Domain atau hostname publik yang diarahkan ke IP VM.
 - Network Security Group (NSG) untuk mengatur akses jaringan.
 - Kapasitas CPU, RAM, dan penyimpanan yang memadai.
 
@@ -60,11 +64,13 @@ Sebelum instalasi dilakukan, beberapa kebutuhan berikut harus tersedia:
 | Port | Protokol | Kegunaan |
 |---|---|---|
 | 22 | TCP | Akses administrasi melalui SSH. |
-| 9001 | TCP | Akses web Penpot melalui HTTP untuk pengujian awal. |
+| 80 | TCP | HTTP, redirect ke HTTPS, dan proses validasi sertifikat. |
+| 443 | TCP | Akses utama Penpot melalui HTTPS. |
+| 9001 | TCP | Akses langsung untuk pengujian awal; tidak perlu dibuka publik setelah Caddy aktif. |
 
 Akses SSH sebaiknya dibatasi pada alamat IP administrator. Port aplikasi perlu diizinkan melalui NSG sesuai kebutuhan deployment.
 
-Untuk penggunaan jangka panjang, disarankan menggunakan HTTPS melalui reverse proxy dengan domain yang sesuai.
+Pada implementasi proyek, port `80` dan `443` digunakan oleh Caddy. Port `9001` masih dapat dijangkau langsung pada saat dokumentasi diperbarui dan sebaiknya ditutup dari internet setelah akses HTTPS dipastikan stabil.
 
 ## 4. Tahapan Instalasi
 
@@ -172,9 +178,9 @@ ls -lh docker-compose.yaml
 
 File tersebut mendefinisikan layanan yang akan dijalankan, image container, variabel lingkungan, jaringan internal, pemetaan port, dan volume penyimpanan.
 
-### 4.5 Mengonfigurasi URL Publik
+### 4.5 Mengonfigurasi URL Publik Awal
 
-Konfigurasi URL publik diperlukan agar Penpot dapat diakses melalui alamat IP VM, bukan hanya melalui `localhost`.
+Pada tahap awal, URL publik dikonfigurasi menggunakan alamat IP VM agar Penpot dapat diverifikasi sebelum DNS dan Caddy diterapkan.
 
 Buka file konfigurasi:
 
@@ -228,7 +234,7 @@ Opsi `-d` digunakan agar container tetap berjalan tanpa mempertahankan terminal 
 
 Pada proses pertama, pengunduhan image dan inisialisasi layanan dapat membutuhkan waktu beberapa menit.
 
-### 4.8 Mengatur Akses Jaringan Azure
+### 4.8 Mengatur Akses Jaringan Azure untuk Pengujian Awal
 
 Agar Penpot dapat diakses dari luar VM:
 
@@ -241,7 +247,7 @@ Agar Penpot dapat diakses dari luar VM:
 
 Pastikan pemetaan port pada file Compose juga sesuai. Port database dan layanan internal lainnya tidak perlu dibuka ke internet.
 
-### 4.9 Mengakses Penpot melalui Browser
+### 4.9 Mengakses Penpot melalui IP pada Tahap Awal
 
 Buka browser dan masukkan alamat berikut:
 
@@ -254,6 +260,129 @@ Ganti `<PUBLIC_IP>` dengan alamat IP publik VM.
 Jika konfigurasi sudah benar, halaman Penpot akan muncul dan pengguna dapat melanjutkan ke dashboard aplikasi.
 
 Ambil screenshot halaman Penpot yang berhasil dibuka sebagai bukti keberhasilan deployment.
+
+### 4.10 Mengarahkan DNS ke Azure VM
+
+Setelah akses awal melalui IP berhasil, domain diarahkan ke alamat IP publik Azure VM.
+
+| Parameter | Nilai implementasi |
+|---|---|
+| Domain | `penpot-kdjk3.linkpc.net` |
+| Tipe DNS record | `A` |
+| Alamat IP tujuan | `20.211.42.204` |
+
+Periksa hasil resolusi DNS:
+
+```bash
+nslookup penpot-kdjk3.linkpc.net
+```
+
+atau:
+
+```bash
+dig +short penpot-kdjk3.linkpc.net
+```
+
+Pada 22 Oktober 2026, domain tersebut berhasil di-resolve ke `20.211.42.204`.
+
+### 4.11 Membuka Port HTTP dan HTTPS pada Azure
+
+Tambahkan inbound rule pada Network Security Group:
+
+| Port | Protokol | Aksi | Fungsi |
+|---:|---|---|---|
+| `80` | TCP | Allow | Redirect HTTP ke HTTPS dan validasi sertifikat |
+| `443` | TCP | Allow | Akses utama Penpot melalui HTTPS |
+
+Port database dan layanan internal lainnya tetap tidak perlu dibuka. Port `9001` digunakan sebagai upstream Caddy dan sebaiknya tidak diekspos publik setelah HTTPS stabil.
+
+### 4.12 Menjalankan Caddy
+
+Implementasi proyek menjalankan Caddy sebagai container terpisah menggunakan host networking. Repository ini menyediakan [template Caddyfile](Caddyfile) yang sama dengan konfigurasi pada Azure VM. Jika repository proyek tersedia pada VM, jalankan perintah berikut dari root repository:
+
+```bash
+sudo mkdir -p /opt/caddy
+sudo cp deploy/Caddyfile /opt/caddy/Caddyfile
+```
+
+Jika template tidak tersedia pada VM, buat file secara manual:
+
+```bash
+sudo mkdir -p /opt/caddy
+sudo nano /opt/caddy/Caddyfile
+```
+
+Isi file:
+
+```caddyfile
+penpot-kdjk3.linkpc.net {
+    reverse_proxy 127.0.0.1:9001
+}
+```
+
+Jalankan container Caddy:
+
+```bash
+sudo docker run -d \
+  --name caddy \
+  --restart unless-stopped \
+  --network host \
+  -v /opt/caddy/Caddyfile:/etc/caddy/Caddyfile:ro \
+  -v caddy_data:/data \
+  -v caddy_config:/config \
+  caddy:2
+```
+
+Caddy menggunakan volume `caddy_data` untuk mempertahankan sertifikat dan data TLS, serta `caddy_config` untuk konfigurasi internal. Dengan DNS dan port jaringan yang benar, Caddy mengelola penerbitan, redirect, dan pembaruan sertifikat HTTPS secara otomatis.
+
+Periksa container dan log:
+
+```bash
+sudo docker ps --filter name=caddy
+sudo docker logs --tail=100 caddy
+```
+
+### 4.13 Memperbarui Konfigurasi Penpot untuk HTTPS
+
+Ubah nilai URI publik pada `docker-compose.yaml`:
+
+```yaml
+PENPOT_PUBLIC_URI: https://penpot-kdjk3.linkpc.net
+```
+
+Hapus `disable-secure-session-cookies` dari `PENPOT_FLAGS` karena aplikasi sekarang diakses melalui HTTPS. Konfigurasi hasil perubahan:
+
+```yaml
+PENPOT_FLAGS: disable-email-verification enable-smtp enable-prepl-server enable-mcp enable-admin-console
+```
+
+Validasi file Compose dan terapkan perubahan tanpa menghapus volume:
+
+```bash
+sudo docker compose -p penpot -f docker-compose.yaml config -q
+sudo docker compose -p penpot -f docker-compose.yaml up -d
+```
+
+### 4.14 Mengakses Domain HTTPS
+
+Buka alamat berikut:
+
+```text
+https://penpot-kdjk3.linkpc.net/
+```
+
+Pengguna tidak perlu menambahkan port `9001`. Request HTTPS diterima Caddy pada port `443`, lalu diteruskan ke Penpot pada `127.0.0.1:9001`.
+
+### 4.15 Membatasi Port 9001
+
+Hasil verifikasi eksternal pada 22 Oktober 2026 menunjukkan port `9001` masih dapat diakses langsung. Untuk menghilangkan jalur HTTP yang melewati Caddy, ubah mapping frontend menjadi loopback-only:
+
+```yaml
+ports:
+  - "127.0.0.1:9001:8080"
+```
+
+Terapkan perubahan, pastikan domain HTTPS tetap berfungsi, lalu hapus inbound rule `9001` dari Azure NSG. Caddy tetap dapat mengakses upstream karena berjalan dengan host networking.
 
 ## 5. Verifikasi Instalasi
 
@@ -295,6 +424,29 @@ Lakukan pengujian berikut:
 
 Pengujian ini membantu memastikan bahwa frontend, backend, dan penyimpanan data bekerja bersama.
 
+### 5.4 Memverifikasi DNS, Caddy, dan HTTPS
+
+Jalankan pemeriksaan berikut dari perangkat di luar VM:
+
+```bash
+nslookup penpot-kdjk3.linkpc.net
+curl -I http://penpot-kdjk3.linkpc.net/
+curl -I https://penpot-kdjk3.linkpc.net/
+```
+
+Hasil verifikasi pada 22 Oktober 2026:
+
+| Pemeriksaan | Hasil |
+|---|---|
+| Resolusi DNS | `penpot-kdjk3.linkpc.net` → `20.211.42.204` |
+| Akses HTTP | `308 Permanent Redirect` menuju HTTPS |
+| Server redirect | `Caddy` |
+| Akses HTTPS | `200 OK` |
+| Jalur proxy | Header `Via: 1.1 Caddy` tersedia pada respons HTTPS |
+| Akses langsung port 9001 | Masih menghasilkan `200 OK`; perlu ditutup sebagai hardening |
+
+Hasil tersebut membuktikan bahwa DNS, redirect, reverse proxy, sertifikat TLS, dan upstream Penpot bekerja. Pengujian fitur aplikasi secara menyeluruh tetap dilakukan pada tahap terpisah.
+
 ## 6. Penyimpanan dan Persistensi Data
 
 Docker Compose menggunakan volume untuk menyimpan data agar tidak hilang ketika container dihentikan atau dibuat ulang.
@@ -321,10 +473,13 @@ Untuk proyek yang perlu dipertahankan, buat cadangan database dan aset sebelum m
 | Permasalahan | Kemungkinan penyebab | Solusi |
 |---|---|---|
 | SSH gagal terhubung | Username, IP, izin key, atau aturan jaringan tidak sesuai | Periksa perintah SSH, izin private key, status VM, dan port 22. |
-| Browser tidak dapat membuka Penpot | Port 9001 diblokir atau frontend tidak berjalan | Periksa NSG, pemetaan port, dan status container. |
+| Browser tidak dapat membuka Penpot | Caddy atau frontend tidak berjalan | Periksa container Caddy, status Penpot, dan log kedua layanan. |
 | Container terus melakukan restart | Kesalahan konfigurasi atau sumber daya VM tidak memadai | Periksa log Docker dan penggunaan CPU/RAM. |
 | Backend tidak dapat terhubung ke database | PostgreSQL belum siap atau konfigurasi koneksi tidak sesuai | Periksa log PostgreSQL dan backend serta variabel konfigurasi database. |
-| Sebagian fitur browser tidak berfungsi | Aplikasi diakses melalui HTTP tanpa secure context | Konfigurasikan HTTPS dan URL publik yang sesuai. |
+| Domain tidak mengarah ke VM | DNS record salah atau belum terpropagasi | Periksa record `A`, `nslookup`, dan IP publik VM. |
+| Sertifikat HTTPS gagal diterbitkan | Port 80/443 tertutup atau DNS salah | Periksa NSG, DNS, dan log Caddy. |
+| Domain menampilkan error proxy | Caddy tidak dapat menjangkau `127.0.0.1:9001` | Periksa `Caddyfile`, mapping frontend, dan status Penpot. |
+| Login/session bermasalah setelah HTTPS | Public URI atau secure cookie belum sesuai | Gunakan URI HTTPS dan hapus `disable-secure-session-cookies`. |
 | Data hilang setelah container dibuat ulang | Data tidak disimpan pada volume persisten atau volume telah dihapus | Periksa konfigurasi volume dan siapkan backup. |
 
 Perintah diagnostik tambahan:
@@ -332,6 +487,7 @@ Perintah diagnostik tambahan:
 ```bash
 sudo docker ps -a
 sudo docker compose -p penpot -f docker-compose.yaml logs --tail=100
+sudo docker logs --tail=100 caddy
 df -h
 free -h
 ```
@@ -371,6 +527,16 @@ sudo docker compose -p penpot -f docker-compose.yaml up -d
 
 Sebelum memperbarui instance yang menyimpan data penting, periksa catatan rilis dan petunjuk migrasi resmi Penpot.
 
+### 8.4 Mengelola Caddy
+
+```bash
+sudo docker ps --filter name=caddy
+sudo docker logs --tail=100 caddy
+sudo docker restart caddy
+```
+
+Jika `Caddyfile` diubah, restart container agar konfigurasi dimuat ulang. Jangan menghapus volume `caddy_data` tanpa alasan karena volume tersebut menyimpan material sertifikat dan state TLS.
+
 ## 9. Menghapus Deployment
 
 Setelah proyek selesai, deployment dapat dihapus untuk mengurangi biaya penggunaan Azure.
@@ -404,13 +570,21 @@ sudo docker compose -p penpot -f docker-compose.yaml down -v
 
 Menghapus container Docker saja tidak otomatis menghentikan seluruh biaya Azure. Disk terkelola dan resource jaringan tertentu dapat tetap menimbulkan biaya selama masih tersedia.
 
+Jika deployment akan dihapus sepenuhnya, container Caddy dapat dihapus setelah aplikasi tidak lagi digunakan:
+
+```bash
+sudo docker rm -f caddy
+```
+
+Volume Caddy dapat dipertahankan apabila sertifikat atau konfigurasi masih diperlukan. Menghapusnya berarti state TLS lokal tidak dapat dipakai kembali.
+
 ## 10. Kesimpulan
 
 Implementasi ini menunjukkan bahwa Penpot dapat dijalankan secara mandiri pada Microsoft Azure dengan menggunakan Docker Compose. Pendekatan berbasis container mempermudah pengelolaan frontend, backend, database, dan layanan pendukung dalam satu konfigurasi deployment.
 
-Aplikasi yang telah berjalan dapat diakses melalui browser, diperiksa menggunakan perintah Docker, serta dihentikan atau dihapus ketika tidak lagi diperlukan.
+Aplikasi yang telah berjalan dapat diakses melalui [https://penpot-kdjk3.linkpc.net/](https://penpot-kdjk3.linkpc.net/). DNS telah mengarah ke Azure VM, Caddy berhasil melakukan redirect HTTP ke HTTPS dan meneruskan request ke Penpot, serta respons HTTPS berhasil diverifikasi.
 
-Untuk penggunaan jangka panjang, pengamanan tambahan berupa HTTPS, kredensial yang kuat, backup berkala, dan pembatasan akses jaringan perlu diterapkan.
+HTTPS sudah diterapkan. Pengamanan lanjutan yang masih perlu dilakukan adalah menutup akses publik langsung ke port `9001`, menggunakan kredensial yang kuat, melakukan backup berkala, dan membatasi akses administrasi.
 
 ## Referensi
 
@@ -418,6 +592,9 @@ Untuk penggunaan jangka panjang, pengamanan tambahan berupa HTTPS, kredensial ya
 2. Penpot — Panduan konfigurasi: https://help.penpot.app/technical-guide/configuration/
 3. Konfigurasi Docker Compose resmi Penpot: https://github.com/penpot/penpot/blob/main/docker/images/docker-compose.yaml
 4. Microsoft Azure Portal: https://portal.azure.com/
+5. Caddy Documentation: https://caddyserver.com/docs/
+6. Catatan implementasi DNS dan Caddy: https://chatgpt.com/share/6ad9025f-a608-83ec-bcc4-994fe8d48b9a
+7. Catatan troubleshooting deployment: https://chatgpt.com/share/6ad90284-65f8-83ec-913a-71fb1e251b8e
 
 ## Daftar Screenshot Dokumentasi
 <img width="1303" height="348" alt="image" src="https://github.com/user-attachments/assets/8f9363a0-2de3-414c-b0ec-dcecd65c158a" />
@@ -446,9 +623,38 @@ Untuk penggunaan jangka panjang, pengamanan tambahan berupa HTTPS, kredensial ya
 <img width="1917" height="1151" alt="image" src="https://github.com/user-attachments/assets/55b8359b-b188-4e01-adae-10c0ddb85922" />
 <img width="1917" height="1146" alt="image" src="https://github.com/user-attachments/assets/82617e26-396e-4ed6-9c94-f9f23f39d402" />
 
-**Gambar 5.** Halaman Penpot yang berhasil diakses melalui IP publik.
+**Gambar 5.** Halaman Penpot yang berhasil diakses melalui IP publik sebelum domain dan HTTPS dikonfigurasi.
 
 
 <img width="1917" height="1147" alt="image" src="https://github.com/user-attachments/assets/ae2f1d4b-9035-444a-b014-a4f570512726" />
 
 **Gambar 6.** File desain uji yang berhasil dibuat dan disimpan.
+
+### Screenshot yang Perlu Ditambahkan
+
+Screenshot berikut belum dimasukkan dan perlu ditambahkan untuk melengkapi dokumentasi implementasi DNS, Caddy, dan HTTPS. Pastikan informasi sensitif seperti private key, password, token, dan data akun tidak terlihat.
+
+| Nomor | Screenshot yang diperlukan | Informasi yang harus terlihat | Contoh keterangan |
+|---:|---|---|---|
+| 7 | Konfigurasi akhir Docker Compose | `PENPOT_PUBLIC_URI` menggunakan `https://penpot-kdjk3.linkpc.net` dan secure session cookie telah diaktifkan | **Gambar 7.** Konfigurasi public URI Penpot setelah domain dan HTTPS diterapkan. |
+| 8 | Record DNS pada penyedia domain | Record `A`, hostname `penpot-kdjk3`, dan tujuan `20.211.42.204` | **Gambar 8.** Record DNS yang mengarahkan domain Penpot ke IP publik Azure VM. |
+| 9 | Inbound rules Azure NSG | Port TCP `80` dan `443` berstatus Allow | **Gambar 9.** Aturan jaringan Azure yang mengizinkan akses HTTP dan HTTPS. |
+| 10 | Isi konfigurasi Caddy | Output `sudo cat /opt/caddy/Caddyfile` yang menampilkan domain dan upstream `127.0.0.1:9001` | **Gambar 10.** Konfigurasi Caddy sebagai reverse proxy menuju frontend Penpot. |
+| 11 | Status container Caddy | Output `sudo docker ps --filter name=caddy` dengan status container `Up` | **Gambar 11.** Container Caddy berjalan pada Azure VM. |
+| 12 | Log Caddy | Output `sudo docker logs --tail 50 caddy` tanpa error konfigurasi atau TLS | **Gambar 12.** Log Caddy setelah reverse proxy dan HTTPS berhasil diaktifkan. |
+| 13 | Resolusi DNS | Output `nslookup penpot-kdjk3.linkpc.net` yang mengarah ke `20.211.42.204` | **Gambar 13.** Verifikasi resolusi domain menuju IP publik Azure VM. |
+| 14 | Verifikasi HTTP dan HTTPS | Output `curl -I` yang menunjukkan HTTP `308` dan HTTPS `200 OK` melalui Caddy | **Gambar 14.** Verifikasi redirect HTTP ke HTTPS dan respons aplikasi melalui Caddy. |
+| 15 | Akses akhir melalui browser | URL `https://penpot-kdjk3.linkpc.net/`, indikator koneksi HTTPS, dan halaman Penpot | **Gambar 15.** Penpot berhasil diakses melalui domain publik menggunakan HTTPS. |
+
+Perintah yang dapat dijalankan sebelum mengambil screenshot terminal:
+
+```bash
+sudo cat /opt/caddy/Caddyfile
+sudo docker ps --filter name=caddy
+sudo docker logs --tail 50 caddy
+nslookup penpot-kdjk3.linkpc.net
+curl -I http://penpot-kdjk3.linkpc.net/
+curl -I https://penpot-kdjk3.linkpc.net/
+```
+
+Setelah screenshot ditambahkan, letakkan gambar sesuai urutan tabel dan gunakan keterangan yang telah disiapkan agar konsisten dengan Gambar 1–6.

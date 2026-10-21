@@ -1,0 +1,3 @@
+penpot-kdjk3.linkpc.net {
+    reverse_proxy 127.0.0.1:9001
+}

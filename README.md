@@ -6,6 +6,8 @@
 
 Repository ini berisi konfigurasi dan dokumentasi proyek self-hosting **Penpot**, sebuah aplikasi desain UI/UX dan prototyping berbasis web yang bersifat open-source.
 
+Implementasi Penpot pada proyek ini dapat diakses melalui [https://penpot-kdjk3.linkpc.net](https://penpot-kdjk3.linkpc.net/). Domain tersebut menggunakan HTTPS dan Caddy sebagai reverse proxy.
+
 ## Anggota Kelompok
 
 | No. | Nama | NIM |
@@ -68,15 +70,20 @@ Tujuan proyek ini adalah:
 | Valkey | Mendukung cache dan koordinasi layanan |
 | Ubuntu Server | Sistem operasi server |
 | Microsoft Azure | Infrastruktur cloud untuk implementasi server |
+| DNS | Mengarahkan domain ke alamat IP publik server |
+| Caddy | Reverse proxy dan pengelola HTTPS otomatis |
+| TLS/HTTPS | Mengamankan komunikasi antara browser dan server |
 
 ## Dokumentasi
 
 1. [Laporan Proyek](docs/report.md)
 2. [Panduan Instalasi](installation/installation-guide.md)
 3. [Panduan Deployment](deploy/deployement-guide.md)
-4. [Docker Compose](deploy/docker-compose.yaml)
-5. Application Usage
-6. Penpot vs Figma
+4. [Panduan Deployment Azure](deploy/deployement-guide-azure.md)
+5. [Docker Compose](deploy/docker-compose.yaml)
+6. [Template Caddyfile](deploy/Caddyfile)
+7. Application Usage
+8. Penpot vs Figma
 
 ## Struktur Repository
 
@@ -85,7 +92,8 @@ penpot/
 ├── deploy/
 │   ├── deployement-guide.md
 │   ├── deployement-guide-azure.md
-│   └── docker-compose.yaml
+│   ├── docker-compose.yaml
+│   └── Caddyfile
 ├── docs/
 │   └── report.md
 ├── installation/
@@ -100,4 +108,5 @@ penpot/
 - [Penpot GitHub Repository](https://github.com/penpot/penpot)
 - [Penpot Self-Hosting Guide](https://help.penpot.app/technical-guide/getting-started/)
 - [Docker Documentation](https://docs.docker.com/)
+- [Caddy Documentation](https://caddyserver.com/docs/)
 - [Figma](https://www.figma.com/)

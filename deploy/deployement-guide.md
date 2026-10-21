@@ -235,6 +235,112 @@ Untuk akses langsung menggunakan port 9001, pastikan:
 
 Jika menggunakan reverse proxy, arahkan domain ke server dan teruskan permintaan web ke frontend Penpot. Konfigurasikan sertifikat TLS untuk menyediakan akses HTTPS.
 
+### 4.9 Mengarahkan DNS ke Server
+
+Buat DNS record yang mengarah ke alamat IP publik server. Implementasi proyek ini menggunakan:
+
+| Parameter | Nilai |
+|---|---|
+| Domain | `penpot-kdjk3.linkpc.net` |
+| Tipe record | `A` |
+| Alamat tujuan | `20.211.42.204` |
+
+Tunggu propagasi DNS, lalu verifikasi dari komputer lokal:
+
+```bash
+nslookup penpot-kdjk3.linkpc.net
+```
+
+atau:
+
+```bash
+dig +short penpot-kdjk3.linkpc.net
+```
+
+Hasilnya harus menampilkan alamat IP publik server. Pastikan firewall cloud atau firewall server mengizinkan TCP port `80` dan `443` untuk layanan web.
+
+### 4.10 Menjalankan Caddy sebagai Reverse Proxy
+
+Pada implementasi proyek, Caddy dijalankan sebagai container terpisah dengan host networking. Repository ini menyediakan [template Caddyfile](Caddyfile) yang sesuai dengan implementasi proyek. Jika repository proyek tersedia pada server, jalankan perintah berikut dari root repository:
+
+```bash
+sudo mkdir -p /opt/caddy
+sudo cp deploy/Caddyfile /opt/caddy/Caddyfile
+```
+
+Jika template tidak tersedia pada server, buat file secara manual:
+
+```bash
+sudo mkdir -p /opt/caddy
+sudo nano /opt/caddy/Caddyfile
+```
+
+Isi `Caddyfile`:
+
+```caddyfile
+penpot-kdjk3.linkpc.net {
+    reverse_proxy 127.0.0.1:9001
+}
+```
+
+Untuk deployment dengan domain lain, ganti `penpot-kdjk3.linkpc.net` pada file tersebut dengan hostname yang digunakan.
+
+Jalankan container Caddy:
+
+```bash
+sudo docker run -d \
+  --name caddy \
+  --restart unless-stopped \
+  --network host \
+  -v /opt/caddy/Caddyfile:/etc/caddy/Caddyfile:ro \
+  -v caddy_data:/data \
+  -v caddy_config:/config \
+  caddy:2
+```
+
+Volume `caddy_data` menyimpan sertifikat dan data TLS, sedangkan `caddy_config` menyimpan konfigurasi internal Caddy. Karena hostname publik digunakan pada `Caddyfile` dan port `80` serta `443` dapat dijangkau, Caddy akan meminta serta memperbarui sertifikat HTTPS secara otomatis.
+
+Periksa status dan log Caddy:
+
+```bash
+sudo docker ps --filter name=caddy
+sudo docker logs --tail=100 caddy
+```
+
+### 4.11 Menyesuaikan Penpot untuk HTTPS
+
+Setelah domain dan Caddy siap, ubah URI publik pada `docker-compose.yaml`:
+
+```yaml
+PENPOT_PUBLIC_URI: https://penpot-kdjk3.linkpc.net
+```
+
+Karena aplikasi sekarang menggunakan HTTPS, hapus `disable-secure-session-cookies` dari `PENPOT_FLAGS`. Contoh konfigurasi proyek:
+
+```yaml
+PENPOT_FLAGS: disable-email-verification enable-smtp enable-prepl-server enable-mcp enable-admin-console
+```
+
+Jangan mengubah konfigurasi database, network, atau volume ketika hanya memperbarui URI publik. Validasi dan terapkan konfigurasi:
+
+```bash
+sudo docker compose -p penpot -f docker-compose.yaml config -q
+sudo docker compose -p penpot -f docker-compose.yaml up -d
+```
+
+Perintah `up -d` membuat ulang container yang memerlukan perubahan tanpa menghapus named volume.
+
+### 4.12 Membatasi Akses Langsung ke Port 9001
+
+Setelah akses HTTPS berhasil, port `9001` tidak perlu dibuka untuk pengguna internet. Konfigurasi yang lebih aman adalah mengikat frontend hanya ke loopback server:
+
+```yaml
+ports:
+  - "127.0.0.1:9001:8080"
+```
+
+Caddy dengan host networking tetap dapat mengakses `127.0.0.1:9001`. Setelah perubahan diterapkan dan HTTPS diverifikasi, hapus inbound rule publik untuk port `9001`. Pertahankan port `80` untuk redirect dan validasi sertifikat, serta port `443` untuk akses HTTPS.
+
 ## 5. Verifikasi Instalasi
 
 ### 5.1 Memeriksa Status Container
@@ -277,6 +383,12 @@ Jika menggunakan domain dan HTTPS:
 https://<DOMAIN_ANDA>
 ```
 
+URL implementasi proyek:
+
+```text
+https://penpot-kdjk3.linkpc.net/
+```
+
 Jika konfigurasi sudah benar, halaman Penpot akan muncul pada browser.
 
 Lakukan pengujian dengan membuat file desain sederhana, menyimpannya, dan memastikan file tersebut dapat dibuka kembali.
@@ -311,12 +423,16 @@ Lakukan pencadangan database dan aset secara berkala jika data perlu dipertahank
 | Backend tidak terhubung ke database | PostgreSQL belum siap atau pengaturan koneksi salah | Periksa log database dan backend serta variabel konfigurasi. |
 | Data hilang setelah container dibuat ulang | Data tidak disimpan dalam volume persisten atau volume terhapus | Periksa konfigurasi volume dan backup. |
 | Fitur browser tertentu tidak berfungsi | Aplikasi diakses menggunakan HTTP | Konfigurasikan domain dan HTTPS. |
+| Domain tidak mengarah ke aplikasi | DNS belum terpropagasi atau record salah | Periksa record `A` dan hasil `nslookup`/`dig`. |
+| Sertifikat HTTPS gagal dibuat | Port 80/443 diblokir atau DNS belum benar | Periksa firewall, NSG, DNS, dan log Caddy. |
+| HTTPS menampilkan halaman error | Caddy tidak dapat menjangkau Penpot | Periksa `reverse_proxy`, status frontend, dan port `9001`. |
 
 Perintah diagnostik tambahan:
 
 ```bash
 sudo docker ps -a
 sudo docker compose -p penpot -f docker-compose.yaml logs --tail=100
+sudo docker logs --tail=100 caddy
 df -h
 free -h
 ```
@@ -391,3 +507,4 @@ Periksa juga disk, alamat IP, snapshot, backup, dan resource tambahan yang masih
 2. Penpot — Panduan konfigurasi: https://help.penpot.app/technical-guide/configuration/
 3. Konfigurasi Docker Compose resmi Penpot: https://github.com/penpot/penpot/blob/main/docker/images/docker-compose.yaml
 4. Docker Documentation: https://docs.docker.com/
+5. Caddy Documentation: https://caddyserver.com/docs/

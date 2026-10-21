@@ -70,7 +70,7 @@ Sebelum instalasi dilakukan, beberapa kebutuhan berikut harus tersedia:
 
 Akses SSH sebaiknya dibatasi pada alamat IP administrator. Port aplikasi perlu diizinkan melalui NSG sesuai kebutuhan deployment.
 
-Pada implementasi proyek, port `80` dan `443` digunakan oleh Caddy. Port `9001` masih dapat dijangkau langsung pada saat dokumentasi diperbarui dan sebaiknya ditutup dari internet setelah akses HTTPS dipastikan stabil.
+Pada implementasi akhir, port `80` dan `443` digunakan oleh Caddy. Akses publik langsung ke port `9001` telah ditutup setelah akses HTTPS dipastikan stabil; port tersebut hanya digunakan sebagai upstream lokal Caddy.
 
 ## 4. Tahapan Instalasi
 
@@ -375,14 +375,14 @@ Pengguna tidak perlu menambahkan port `9001`. Request HTTPS diterima Caddy pada 
 
 ### 4.15 Membatasi Port 9001
 
-Hasil verifikasi eksternal pada 22 Oktober 2026 menunjukkan port `9001` masih dapat diakses langsung. Untuk menghilangkan jalur HTTP yang melewati Caddy, ubah mapping frontend menjadi loopback-only:
+Untuk menghilangkan jalur HTTP yang melewati Caddy, mapping frontend pada implementasi akhir dibatasi ke loopback:
 
 ```yaml
 ports:
   - "127.0.0.1:9001:8080"
 ```
 
-Terapkan perubahan, pastikan domain HTTPS tetap berfungsi, lalu hapus inbound rule `9001` dari Azure NSG. Caddy tetap dapat mengakses upstream karena berjalan dengan host networking.
+Perubahan diterapkan, akses domain HTTPS diverifikasi, kemudian inbound rule `9001` dihapus dari Azure NSG. Caddy tetap dapat mengakses upstream karena berjalan dengan host networking. Verifikasi eksternal pada 22 Oktober 2026 menunjukkan koneksi ke port `9001` mengalami timeout, sedangkan domain HTTPS tetap menghasilkan respons `200 OK`.
 
 ## 5. Verifikasi Instalasi
 
@@ -443,7 +443,7 @@ Hasil verifikasi pada 22 Oktober 2026:
 | Server redirect | `Caddy` |
 | Akses HTTPS | `200 OK` |
 | Jalur proxy | Header `Via: 1.1 Caddy` tersedia pada respons HTTPS |
-| Akses langsung port 9001 | Masih menghasilkan `200 OK`; perlu ditutup sebagai hardening |
+| Akses langsung port 9001 | Tidak dapat dijangkau dari internet; koneksi mengalami timeout |
 
 Hasil tersebut membuktikan bahwa DNS, redirect, reverse proxy, sertifikat TLS, dan upstream Penpot bekerja. Pengujian fitur aplikasi secara menyeluruh tetap dilakukan pada tahap terpisah.
 
@@ -584,7 +584,7 @@ Implementasi ini menunjukkan bahwa Penpot dapat dijalankan secara mandiri pada M
 
 Aplikasi yang telah berjalan dapat diakses melalui [https://penpot-kdjk3.linkpc.net/](https://penpot-kdjk3.linkpc.net/). DNS telah mengarah ke Azure VM, Caddy berhasil melakukan redirect HTTP ke HTTPS dan meneruskan request ke Penpot, serta respons HTTPS berhasil diverifikasi.
 
-HTTPS sudah diterapkan. Pengamanan lanjutan yang masih perlu dilakukan adalah menutup akses publik langsung ke port `9001`, menggunakan kredensial yang kuat, melakukan backup berkala, dan membatasi akses administrasi.
+HTTPS sudah diterapkan dan akses publik langsung ke port `9001` telah ditutup. Pengamanan lanjutan yang tetap perlu dipertahankan mencakup penggunaan kredensial yang kuat, backup berkala, serta pembatasan akses administrasi SSH hanya dari sumber tepercaya.
 
 ## Referensi
 

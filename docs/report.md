@@ -342,7 +342,7 @@ Named volume memisahkan data persisten dari lifecycle container. Container dapat
 | Administrator → Azure VM | `22/TCP` | Dibuka melalui NSG | Digunakan untuk SSH |
 | Pengguna → Caddy | `80/TCP` | Aktif | Redirect HTTP ke HTTPS dan validasi sertifikat |
 | Pengguna → Caddy | `443/TCP` | Aktif | Akses utama Penpot melalui HTTPS |
-| Pengguna → Penpot Frontend | `9001/TCP` | Masih dapat diakses publik | Jalur lama; direkomendasikan ditutup setelah binding ke loopback |
+| Pengguna → Penpot Frontend | `9001/TCP` | Tidak dibuka publik | Frontend dibatasi ke loopback dan hanya menjadi upstream Caddy |
 | Pengguna → PostgreSQL | `5432/TCP` | Tidak dibuka | Hanya digunakan pada network Docker |
 | Pengguna → Valkey | `6379/TCP` | Tidak dibuka | Hanya digunakan pada network Docker |
 | Host → Mailcatcher UI | `1080/TCP` | Dipetakan oleh Compose, tidak diperlukan untuk pengguna | NSG sebaiknya tetap menutup port ini |
@@ -506,9 +506,9 @@ Network Security Group pada Azure dikonfigurasi untuk mengizinkan:
 | `22` | TCP | Administrasi server melalui SSH |
 | `80` | TCP | Redirect HTTP dan validasi sertifikat Caddy |
 | `443` | TCP | Akses Penpot melalui HTTPS |
-| `9001` | TCP | Akses awal/upstream Penpot; masih publik dan perlu dibatasi |
+| `9001` | TCP | Upstream lokal Penpot untuk Caddy; tidak dibuka ke internet |
 
-Database dan layanan internal tidak diekspos langsung ke internet. Akses utama aplikasi menggunakan domain HTTPS melalui Caddy. Port `9001` masih merespons akses eksternal dan dicatat sebagai pekerjaan hardening.
+Database dan layanan internal tidak diekspos langsung ke internet. Akses utama aplikasi menggunakan domain HTTPS melalui Caddy. Akses eksternal langsung ke port `9001` telah ditutup setelah tahap pengujian awal selesai.
 
 Urutan konfigurasi jaringan:
 
@@ -589,7 +589,7 @@ curl -I http://penpot-kdjk3.linkpc.net/
 curl -I https://penpot-kdjk3.linkpc.net/
 ```
 
-Hasil tersebut membuktikan DNS, redirect, penerbitan sertifikat TLS, reverse proxy, dan upstream Penpot bekerja. Pemeriksaan tambahan menunjukkan `http://20.211.42.204:9001` masih menghasilkan `200 OK`, sehingga port tersebut perlu ditutup dari internet setelah frontend diikat ke loopback.
+Hasil tersebut membuktikan DNS, redirect, penerbitan sertifikat TLS, reverse proxy, dan upstream Penpot bekerja. Setelah frontend dibatasi ke loopback dan inbound rule `9001` dihapus, verifikasi eksternal pada 22 Oktober 2026 menunjukkan koneksi langsung ke port tersebut mengalami timeout. Pada pemeriksaan yang sama, domain HTTPS tetap menghasilkan respons `200 OK`.
 
 ### 6.8 Persistensi Data
 
@@ -672,12 +672,12 @@ Prosedur pembaruan yang aman:
 
 ### 6.11 Keamanan dan Batasan Implementasi
 
-Implementasi saat ini sudah menggunakan domain dan HTTPS melalui Caddy. Jalur publik lama pada port `9001` masih aktif, sehingga hardening belum sepenuhnya selesai.
+Implementasi saat ini sudah menggunakan domain dan HTTPS melalui Caddy. Jalur publik lama pada port `9001` telah ditutup sehingga pengguna hanya mengakses Penpot melalui Caddy pada port `80` dan `443`.
 
 | Temuan | Kondisi saat ini | Rekomendasi lanjutan |
 |---|---|---|
 | Transport web utama | HTTPS melalui Caddy | Pertahankan pembaruan otomatis sertifikat dan pantau log Caddy |
-| Port frontend langsung | Port `9001` masih dapat diakses publik | Bind ke `127.0.0.1:9001:8080` dan hapus rule NSG `9001` |
+| Port frontend langsung | Port `9001` dibatasi ke loopback dan tidak dapat diakses dari internet | Pertahankan binding lokal dan jangan membuka kembali rule NSG `9001` |
 | Cookie | `disable-secure-session-cookies` sudah dihapus | Pertahankan konfigurasi secure cookie selama HTTPS digunakan |
 | Secret key | Compose menyediakan placeholder | Ganti dengan secret acak yang kuat |
 | Kredensial database | Nilai Compose perlu diamankan | Gunakan password unik dan jangan commit secret |
@@ -730,7 +730,7 @@ free -h
 | Redirect HTTP ke HTTPS | ✅ Berhasil | Respons `308 Permanent Redirect` |
 | Akses domain HTTPS | ✅ Berhasil | Respons `200 OK` pada `https://penpot-kdjk3.linkpc.net/` |
 | Secure session cookie | ✅ Diterapkan | Flag `disable-secure-session-cookies` telah dihapus |
-| Pembatasan port 9001 | ⚠️ Belum | Port masih dapat diakses publik dan perlu ditutup |
+| Pembatasan port 9001 | ✅ Berhasil | Koneksi eksternal mengalami timeout dan domain HTTPS tetap aktif |
 | Pengujian fitur terstruktur | ⏳ Belum dilakukan | Akan dilakukan pada tahap pengujian aplikasi |
 
 Verifikasi di atas memastikan bahwa infrastruktur, container, DNS, reverse proxy, TLS, jaringan, dan akses dasar aplikasi telah berfungsi. Pembuatan file desain awal hanya digunakan sebagai pemeriksaan awal bahwa aplikasi dapat digunakan dan data dapat disimpan; kegiatan tersebut belum menggantikan pengujian fungsional yang terstruktur.
@@ -757,7 +757,7 @@ Bukti visual implementasi tersedia pada bagian [Daftar Screenshot Dokumentasi](.
 5. Halaman Penpot yang berhasil diakses melalui IP publik pada tahap awal.
 6. File desain awal yang berhasil dibuat dan disimpan.
 
-Bukti visual berikut masih perlu ditambahkan untuk melengkapi dokumentasi deployment akhir:
+Bukti visual deployment akhir yang telah ditambahkan meliputi:
 
 7. Konfigurasi `PENPOT_PUBLIC_URI` menggunakan domain HTTPS.
 8. Record DNS yang mengarah ke IP publik Azure VM.
@@ -769,7 +769,7 @@ Bukti visual berikut masih perlu ditambahkan untuk melengkapi dokumentasi deploy
 14. Hasil redirect HTTP dan respons HTTPS.
 15. Halaman Penpot yang diakses melalui domain HTTPS.
 
-Detail isi dan contoh keterangan setiap screenshot tersedia pada bagian [Screenshot yang Perlu Ditambahkan](../deploy/deployement-guide-azure.md#screenshot-yang-perlu-ditambahkan).
+Seluruh screenshot dan keterangannya juga tersedia pada bagian [Daftar Screenshot Dokumentasi](../deploy/deployement-guide-azure.md#daftar-screenshot-dokumentasi) dalam panduan deployment Azure.
 
 ### 8.1 Dokumentasi Implementasi
 
@@ -857,14 +857,14 @@ Detail isi dan contoh keterangan setiap screenshot tersedia pada bagian [Screens
 | Menjalankan stack | `docker compose -p penpot -f docker-compose.yaml up -d` | Gambar 4 |
 | Memverifikasi akses awal | `http://<IP_PUBLIK_VM>:9001` | Gambar 5 |
 | Memverifikasi penyimpanan awal | Membuat dan membuka file desain | Gambar 6 |
-| Mengonfigurasi URI publik | `PENPOT_PUBLIC_URI: https://penpot-kdjk3.linkpc.net` | Gambar 7 (perlu ditambahkan) |
-| Mengarahkan domain ke VM | Record DNS `A` menuju `20.211.42.204` | Gambar 8 (perlu ditambahkan) |
-| Membuka akses web | Inbound rules TCP `80` dan `443` | Gambar 9 (perlu ditambahkan) |
-| Mengonfigurasi reverse proxy | `/opt/caddy/Caddyfile` | Gambar 10 (perlu ditambahkan) |
-| Menjalankan Caddy | `docker ps` dan `docker logs` | Gambar 11–12 (perlu ditambahkan) |
-| Memverifikasi DNS | `nslookup penpot-kdjk3.linkpc.net` | Gambar 13 (perlu ditambahkan) |
-| Memverifikasi redirect dan HTTPS | `curl -I` melalui HTTP dan HTTPS | Gambar 14 (perlu ditambahkan) |
-| Memverifikasi akses akhir | `https://penpot-kdjk3.linkpc.net/` melalui browser | Gambar 15 (perlu ditambahkan) |
+| Mengonfigurasi URI publik | `PENPOT_PUBLIC_URI: https://penpot-kdjk3.linkpc.net` | Gambar 7 |
+| Mengarahkan domain ke VM | Record DNS `A` menuju `20.211.42.204` | Gambar 8 |
+| Membuka akses web | Inbound rules TCP `80` dan `443` | Gambar 9 |
+| Mengonfigurasi reverse proxy | `/opt/caddy/Caddyfile` | Gambar 10 |
+| Menjalankan Caddy | `docker ps` dan `docker logs` | Gambar 11–12 |
+| Memverifikasi DNS | `nslookup penpot-kdjk3.linkpc.net` | Gambar 13 |
+| Memverifikasi redirect dan HTTPS | `curl -I` melalui HTTP dan HTTPS | Gambar 14 |
+| Memverifikasi akses akhir | `https://penpot-kdjk3.linkpc.net/` melalui browser | Gambar 15 |
 
 ## 9. Pekerjaan yang Belum Selesai
 
@@ -933,7 +933,7 @@ Perbandingan akhir akan dilakukan setelah penggunaan dan pengujian Penpot selesa
 | HTTPS/TLS | ✅ Selesai | Redirect dan respons HTTPS telah diverifikasi |
 | Konfigurasi akses jaringan | ✅ Selesai | Port SSH, HTTP, dan HTTPS telah dikonfigurasi |
 | Verifikasi deployment | ✅ Selesai | Container, DNS, redirect, proxy, dan akses HTTPS telah diverifikasi |
-| Hardening port 9001 | ⚠️ Perlu ditindaklanjuti | Port masih dapat diakses langsung dari internet |
+| Hardening port 9001 | ✅ Selesai | Port tidak dapat diakses dari internet; upstream lokal tetap digunakan Caddy |
 | Dokumentasi deployment | ✅ Selesai | Panduan dan screenshot telah tersedia |
 | Penggunaan fitur utama | ⏳ Belum | Menjadi tahap selanjutnya |
 | Pengujian aplikasi | ⏳ Belum | Menunggu dokumentasi fitur utama |
@@ -944,19 +944,18 @@ Perbandingan akhir akan dilakukan setelah penggunaan dan pengujian Penpot selesa
 
 Urutan pekerjaan berikutnya:
 
-1. Membatasi frontend ke `127.0.0.1:9001` dan menutup inbound rule publik port `9001`.
-2. Menggunakan dan mendokumentasikan fitur utama Penpot.
-3. Menyiapkan skenario dan tabel pengujian aplikasi.
-4. Menjalankan pengujian serta mengumpulkan bukti hasilnya.
-5. Membandingkan Penpot dengan Figma berdasarkan hasil penggunaan.
-6. Memperbarui kesimpulan dan status laporan.
-7. Menyusun materi presentasi akhir.
+1. Menggunakan dan mendokumentasikan fitur utama Penpot.
+2. Menyiapkan skenario dan tabel pengujian aplikasi.
+3. Menjalankan pengujian serta mengumpulkan bukti hasilnya.
+4. Membandingkan Penpot dengan Figma berdasarkan hasil penggunaan.
+5. Memperbarui kesimpulan dan status laporan.
+6. Menyusun materi presentasi akhir.
 
 ## 12. Kesimpulan Sementara
 
 Penpot telah berhasil diimplementasikan secara self-hosted pada Microsoft Azure menggunakan Docker Compose. DNS `penpot-kdjk3.linkpc.net` mengarah ke Azure VM, Caddy menangani reverse proxy dan TLS, HTTP dialihkan ke HTTPS, serta aplikasi dapat diakses dengan respons `200 OK` melalui [https://penpot-kdjk3.linkpc.net/](https://penpot-kdjk3.linkpc.net/).
 
-Deployment dan pengamanan transport sudah selesai, tetapi akses langsung port `9001` masih perlu ditutup sebagai hardening. Fokus utama proyek selanjutnya beralih ke penggunaan dan evaluasi aplikasi. Kesimpulan akhir mengenai kualitas fitur, hasil pengujian, serta perbandingan dengan Figma akan ditambahkan setelah ketiga tahap tersebut selesai.
+Deployment dan pengamanan transport sudah selesai. Akses langsung port `9001` telah ditutup tanpa mengganggu akses HTTPS melalui Caddy. Fokus utama proyek selanjutnya beralih ke penggunaan dan evaluasi aplikasi. Kesimpulan akhir mengenai kualitas fitur, hasil pengujian, serta perbandingan dengan Figma akan ditambahkan setelah ketiga tahap tersebut selesai.
 
 ## 13. Referensi
 

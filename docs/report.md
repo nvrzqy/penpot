@@ -771,7 +771,7 @@ Bukti visual berikut masih perlu ditambahkan untuk melengkapi dokumentasi deploy
 
 Detail isi dan contoh keterangan setiap screenshot tersedia pada bagian [Screenshot yang Perlu Ditambahkan](../deploy/deployement-guide-azure.md#screenshot-yang-perlu-ditambahkan).
 
-### 8.1 Bukti Visual Implementasi
+### 8.1 Dokumentasi Implementasi
 
 <img width="1303" height="348" alt="Informasi Azure Virtual Machine" src="https://github.com/user-attachments/assets/8f9363a0-2de3-414c-b0ec-dcecd65c158a" />
 <img width="1337" height="557" alt="Konfigurasi Azure Virtual Machine" src="https://github.com/user-attachments/assets/06bb1614-8938-423c-b746-eaf040aa8479" />
@@ -801,9 +801,51 @@ Detail isi dan contoh keterangan setiap screenshot tersedia pada bagian [Screens
 
 **Gambar 6.** File desain awal berhasil dibuat dan disimpan sebagai verifikasi operasional dasar.
 
-#### Bukti Visual yang Belum Ditambahkan
 
-Gambar 7–15 untuk konfigurasi HTTPS Penpot, DNS, Azure NSG, Caddy, pengujian redirect, dan akses akhir melalui domain belum disisipkan. Nomor serta caption telah disiapkan dalam panduan deployment Azure agar gambar dapat ditambahkan tanpa mengubah struktur laporan.
+<img width="1441" height="140" alt="image" src="https://github.com/user-attachments/assets/75b95b50-e004-416c-acf7-249aa68f6492" />
+
+**Gambar 7.** Konfigurasi public URI Penpot setelah domain dan HTTPS diterapkan.
+
+
+<img width="642" height="667" alt="image" src="https://github.com/user-attachments/assets/5be0405f-e385-46cf-9b0f-dea7c129e364" />
+
+**Gambar 8.** Record DNS yang mengarahkan domain Penpot ke IP publik Azure VM.
+
+
+<img width="1415" height="280" alt="image" src="https://github.com/user-attachments/assets/2b63e9be-d33e-4266-8227-a049669288b5" />
+
+**Gambar 9.** Aturan jaringan Azure yang mengizinkan akses HTTP dan HTTPS.
+
+
+<img width="716" height="137" alt="image" src="https://github.com/user-attachments/assets/5ec60efc-cb0f-460c-b72f-01262f38a5f9" />
+
+**Gambar 10.** Konfigurasi Caddy sebagai reverse proxy menuju frontend Penpot.
+
+
+<img width="1307" height="112" alt="image" src="https://github.com/user-attachments/assets/afc6f169-a2de-4435-a9f8-ad6882a45b7d" />
+
+**Gambar 11.** Container Caddy berjalan pada Azure VM.
+
+
+<img width="1917" height="1127" alt="image" src="https://github.com/user-attachments/assets/7b21b9fb-8b28-4d00-9909-e1ebff0117fe" />
+<img width="1917" height="1110" alt="image" src="https://github.com/user-attachments/assets/50e80247-2f8b-42fd-9d1e-69be0acb4217" />
+
+**Gambar 12.** Log Caddy setelah reverse proxy dan HTTPS berhasil diaktifkan.
+
+
+<img width="630" height="195" alt="image" src="https://github.com/user-attachments/assets/7b2351a4-1520-47eb-a2c2-048ac2e1550c" />
+
+**Gambar 13.** Verifikasi resolusi domain menuju IP publik Azure VM.
+
+
+<img width="727" height="187" alt="image" src="https://github.com/user-attachments/assets/5eb91a2b-d502-4ba4-ae8b-5e35b015e869" />
+
+**Gambar 14.** Verifikasi redirect HTTP ke HTTPS dan respons aplikasi melalui Caddy.
+
+
+<img width="1867" height="1155" alt="image" src="https://github.com/user-attachments/assets/1ef2ae3e-0ac4-4098-ada7-ff4110abbb28" />
+
+**Gambar 15.** Penpot berhasil diakses melalui domain publik menggunakan HTTPS.
 
 ### 8.2 Keterlacakan Implementasi
 
